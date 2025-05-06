@@ -13,9 +13,12 @@ function Gameboard() {
 
   const placeToken = (i, j, token) => {
     const loc = board[i][j];
-    if (loc < 0 || loc > 2 ) {
-      console.log('That is either out of bounds or a cell that is occupied.');  // for console
-      return;  // undefined  // consider recursively calling this?
+    if (!loc) {
+      console.log('Outta bounds, dude.');  // for console
+      return 'ERROR';  // undefined  // consider recursively calling this? right now it just skips
+    } else if (!(loc.getValue() === 'n')) {
+      console.log("That spot's taken, poke.");
+      return 'ERROR'
     }
     board[i][j].addToken(token);
   };
@@ -78,8 +81,9 @@ function GameController() {
   };
 
   const playRound = (i, j) => {
+    const errorCheck = board.placeToken(i, j, activePlayer.token);
+    if (errorCheck) return;
     console.log(`${activePlayer.name} moved to ${i}, ${j}...`);
-    board.placeToken(i, j, activePlayer.token);
     switchPlayerTurn();
     printNewRound();
   }
