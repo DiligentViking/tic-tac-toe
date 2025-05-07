@@ -81,23 +81,34 @@ function GameController() {
   };
 
   const checkWinner = () => {
-    const detectWinner = (cell1, cell2, cell3) => {
-      if (cell1 === cell2 && cell1 === cell3 && cell1 !== 'n') {
-        const winner = players.find((player) => player.token === cell1).name;
-        return winner;
-      }
-    }
     const cells = board.getBoard();
     let cell1;
     let cell2;
     let cell3;
     let winner;
+    let isCat = true;
+    const detectWinner = () => {
+      if (cell1 === cell2 && cell1 === cell3 && cell1 !== 'n') {
+        winner = players.find((player) => player.token === cell1).name;
+      }
+    }
+    const detectCat = () => {  // i call this at the end because the last move may cause a win
+      tieCheck:
+      for (const row of cells) {
+        for (const cell of row) {
+          if (cell.getValue() === 'n') {
+            isCat = false;
+            break tieCheck;
+          }
+        }
+      }
+    }
     // horizontals
     for (const row of cells) {
       cell1 = row[0].getValue();
       cell2 = row[1].getValue();
       cell3 = row[2].getValue();
-      winner = detectWinner(cell1, cell2, cell3);
+      detectWinner(cell1, cell2, cell3);
       if (winner) return winner;
     }
     // verticals
@@ -106,29 +117,36 @@ function GameController() {
       cell1 = cells[0][i].getValue();  // we access one from each row
       cell2 = cells[1][i].getValue();
       cell3 = cells[2][i].getValue();
-      winner = detectWinner(cell1, cell2, cell3);
+      detectWinner(cell1, cell2, cell3);
       if (winner) return winner;
     }
     // diagonal downhill
     cell1 = cells[0][0].getValue();
     cell2 = cells[1][1].getValue();
     cell3 = cells[2][2].getValue();  
-    winner = detectWinner(cell1, cell2, cell3);
+    detectWinner(cell1, cell2, cell3);
     if (winner) return winner;
     // diagonal uphill
     cell1 = cells[0][2].getValue();
     cell2 = cells[1][1].getValue();
     cell3 = cells[2][0].getValue();  
-    winner = detectWinner(cell1, cell2, cell3);
+    detectWinner(cell1, cell2, cell3);
     if (winner) return winner;
+    // Check if board is full
+    detectCat();
+    if (isCat) return 'CAT';
   }
 
   const playRound = (i, j) => {
     const errorCheck = board.placeToken(i, j, activePlayer.token);
     if (errorCheck) return;
     console.log(`${activePlayer.name} moved to ${i}, ${j}...`);
-    const potentialWinner = checkWinner();
-    if (potentialWinner) return 'THE WINNER IS ' + potentialWinner;  // ture
+    const gameEnd = checkWinner();
+    if (gameEnd) {
+      console.log('THE WINNER IS ' + gameEnd);
+      board.printBoard();
+      return true;
+    }
     switchPlayerTurn();
     printNewRound();
   }
@@ -143,8 +161,29 @@ function GameController() {
 
 const game = GameController();
 
+// Player1 wins (horizontal)
 /* game.playRound(0, 0);
 game.playRound(1, 0);
 game.playRound(0, 1);
 game.playRound(1, 1);
-console.log(game.playRound(0, 2)); */
+game.playRound(0, 2);
+ */
+
+// Player2 wins (vertical)
+/* game.playRound(0, 0);
+game.playRound(0, 2);
+game.playRound(1, 1);
+game.playRound(1, 2);
+game.playRound(2, 0);
+game.playRound(2, 2); */
+
+// CAT (board is filled, no 3-in-a-rows)
+game.playRound(0, 0);
+game.playRound(0, 1);
+game.playRound(1, 1);
+game.playRound(0, 2);
+game.playRound(2, 1);
+game.playRound(1, 0);
+game.playRound(1, 2);
+game.playRound(2, 2);
+game.playRound(2, 0);
