@@ -1,0 +1,38 @@
+
+// Player1 wins (horizontal)
+/*
+game.playRound(0, 0);
+game.playRound(1, 0);
+game.playRound(0, 1);
+game.playRound(1, 1);
+game.playRound(0, 2);
+*/
+// Player2 wins (vertical)
+/*
+game.playRound(0, 0);
+game.playRound(0, 2);
+game.playRound(1, 1);
+game.playRound(1, 2);
+game.playRound(2, 0);
+game.playRound(2, 2);
+*/
+// Player1 wins (diagonal)
+/* 
+game.playRound(0, 0);
+game.playRound(2, 0);
+game.playRound(1, 1);
+game.playRound(2, 1);
+game.playRound(2, 2);
+*/
+// CAT (board is filled, no 3-in-a-rows)
+/*
+game.playRound(0, 0);
+game.playRound(0, 1);
+game.playRound(1, 1);
+game.playRound(0, 2);
+game.playRound(2, 1);
+game.playRound(1, 0);
+game.playRound(1, 2);
+game.playRound(2, 2);
+game.playRound(2, 0);
+*/
