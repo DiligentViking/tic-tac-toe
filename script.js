@@ -18,7 +18,7 @@ function Gameboard() {
       return 'ERROR';  // undefined  // consider recursively calling this? right now it just skips
     } else if (!(loc.getValue() === 'n')) {
       console.log("That spot's taken, poke.");
-      return 'ERROR'
+      return 'ERROR';
     }
     board[i][j].addToken(token);
   };
@@ -80,10 +80,55 @@ function GameController() {
     console.log(`${activePlayer.name}'s turn`);
   };
 
+  const checkWinner = () => {
+    const detectWinner = (cell1, cell2, cell3) => {
+      if (cell1 === cell2 && cell1 === cell3 && cell1 !== 'n') {
+        const winner = players.find((player) => player.token === cell1).name;
+        return winner;
+      }
+    }
+    const cells = board.getBoard();
+    let cell1;
+    let cell2;
+    let cell3;
+    let winner;
+    // horizontals
+    for (const row of cells) {
+      cell1 = row[0].getValue();
+      cell2 = row[1].getValue();
+      cell3 = row[2].getValue();
+      winner = detectWinner(cell1, cell2, cell3);
+      if (winner) return winner;
+    }
+    // verticals
+    const cols = cells[0].length;
+    for (let i = 0; i < cols; i++) {  // the thing that's changing is the column
+      cell1 = cells[0][i].getValue();  // we access one from each row
+      cell2 = cells[1][i].getValue();
+      cell3 = cells[2][i].getValue();
+      winner = detectWinner(cell1, cell2, cell3);
+      if (winner) return winner;
+    }
+    // diagonal downhill
+    cell1 = cells[0][0].getValue();
+    cell2 = cells[1][1].getValue();
+    cell3 = cells[2][2].getValue();  
+    winner = detectWinner(cell1, cell2, cell3);
+    if (winner) return winner;
+    // diagonal uphill
+    cell1 = cells[0][2].getValue();
+    cell2 = cells[1][1].getValue();
+    cell3 = cells[2][0].getValue();  
+    winner = detectWinner(cell1, cell2, cell3);
+    if (winner) return winner;
+  }
+
   const playRound = (i, j) => {
     const errorCheck = board.placeToken(i, j, activePlayer.token);
     if (errorCheck) return;
     console.log(`${activePlayer.name} moved to ${i}, ${j}...`);
+    const potentialWinner = checkWinner();
+    if (potentialWinner) return 'THE WINNER IS ' + potentialWinner;  // ture
     switchPlayerTurn();
     printNewRound();
   }
@@ -97,3 +142,9 @@ function GameController() {
 
 
 const game = GameController();
+
+/* game.playRound(0, 0);
+game.playRound(1, 0);
+game.playRound(0, 1);
+game.playRound(1, 1);
+console.log(game.playRound(0, 2)); */
