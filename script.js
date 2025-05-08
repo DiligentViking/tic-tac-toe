@@ -144,13 +144,8 @@ function GameController() {
   const playRound = (i, j) => {
     const errorCheck = board.placeToken(i, j, activePlayer.token);
     if (errorCheck) return;
-    console.log(`${activePlayer.name} moved to ${i}, ${j}...`);
     const gameEnd = checkWinner();
-    if (gameEnd) {
-      console.log('THE WINNER IS ' + gameEnd);
-      board.printBoard();
-      return true;
-    }
+    if (gameEnd) return gameEnd;
     switchPlayerTurn();
     printNewRound();
   };
@@ -166,10 +161,18 @@ function GameController() {
 
 
 function ScreenController() {
-  const game = GameController();
   const divBoard = document.getElementById('board');
   const divTurn = document.getElementById('turn');
-  const divWinner = document.getElementById('winner');
+  const divOthermsg = document.getElementById('othermsg');
+  const btnNewGame = document.createElement('button');
+  let game;
+  let gameEnd;
+
+  const startNewGame = () => {
+    game = GameController();
+    gameEnd = undefined;
+    updateScreen();
+  }
 
   const updateScreen = () => {
     // Create board
@@ -181,16 +184,36 @@ function ScreenController() {
         btnCell.classList.add('cell');
         const coords = `${board.indexOf(row)}, ${row.indexOf(cell)}`;
         btnCell.dataset.coords = coords;
-        btnCell.textContent = 'n';
+        btnCell.textContent = cell.getValue();
         divBoard.appendChild(btnCell);
       }
     }
     // Update turn
     const activePlayer = game.getActivePlayer().name;
     divTurn.textContent = `${activePlayer}, move.`;
+    // Update other message and btnNewGame
+    if (gameEnd) {
+      if (gameEnd === 'CAT') {
+        divOthermsg.textContent = "No one wins. It's a cat.";
+      } else {
+        divOthermsg.textContent = `The winner is ${gameEnd}.`;
+      }
+      btnNewGame.textContent = 'new game';
+      btnNewGame.addEventListener('click', () => startNewGame());  // this button is kind of awkard
+      divOthermsg.appendChild(btnNewGame);
+    } else {
+      divOthermsg.textContent = '';
+    }
   };
 
-  updateScreen();
+  divBoard.addEventListener('click', (e) => {
+    if (gameEnd) return;
+    const coords = e.target.dataset.coords.split(', ');
+    gameEnd = game.playRound(coords[0], coords[1]);
+    updateScreen();
+  });
+
+  startNewGame();
 }
 
 
