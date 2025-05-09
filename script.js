@@ -59,18 +59,17 @@ function Cell() {
 }
 
 
-function GameController() {
-  const playerOneName = 'Player1';
-  const playterTwoName = 'Player2';
+function GameController(playerInfo) {
+  const {namePlayerOne, symbolPlayerOne, namePlayerTwo, symbolPlayerTwo} = playerInfo;
   const board = Gameboard();
   const players = [
     {
-      name: playerOneName,
-      token: 'X'
+      name: namePlayerOne,
+      token: symbolPlayerOne
     },
     {
-      name: playterTwoName,
-      token: 'O'
+      name: namePlayerTwo,
+      token: symbolPlayerTwo
     }
   ];
   let activePlayer = players[0];
@@ -172,15 +171,10 @@ function ScreenController() {
   const divBoard = document.getElementById('board');
   const divTurn = document.getElementById('turn');
   const divOthermsg = document.getElementById('othermsg');
+  const modalNewGame = document.getElementById('modal-new-game');
   const btnNewGame = document.createElement('button');
   let game;
   let gameEnd;
-
-  function startNewGame() {
-    game = GameController();
-    gameEnd = undefined;
-    updateScreen();
-  }
 
   function updateScreen() {
     /* Create board */
@@ -195,6 +189,7 @@ function ScreenController() {
         btnCell.textContent = cell.getValue();
         divBoard.appendChild(btnCell);
       }
+      divBoard.appendChild(document.createElement('br'));  // haha perfect. officially 0 lines of css.
     }
     /* Update turn */
     const activePlayer = game.getActivePlayer().name;
@@ -207,7 +202,6 @@ function ScreenController() {
         divOthermsg.textContent = `The winner is ${gameEnd}.`;
       }
       btnNewGame.textContent = 'new game';
-      btnNewGame.addEventListener('click', () => startNewGame());  // this button is kind of awkard
       divOthermsg.appendChild(btnNewGame);
     } else {
       divOthermsg.textContent = '';
@@ -221,7 +215,23 @@ function ScreenController() {
     updateScreen();
   });
 
-  startNewGame();
+  modalNewGame.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const namePlayerOne = document.getElementById('name-player-one').value;
+    const symbolPlayerOne = document.getElementById('symbol-player-one').value;
+    const namePlayerTwo = document.getElementById('name-player-two').value;
+    const symbolPlayerTwo = document.getElementById('symbol-player-two').value;
+    const playerInfo = {namePlayerOne, symbolPlayerOne, namePlayerTwo, symbolPlayerTwo};
+    console.log(playerInfo);
+    game = GameController(playerInfo);
+    gameEnd = undefined;
+    modalNewGame.close();
+    updateScreen();
+  });
+
+  btnNewGame.addEventListener('click', () => modalNewGame.showModal());  // this button is kind of awkard
+
+  modalNewGame.showModal();
 }
 
 

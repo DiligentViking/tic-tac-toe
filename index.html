@@ -11,5 +11,40 @@
   <div id="board"></div>
   <div id="turn"></div>
   <div id="othermsg"></div>
+  <dialog id="modal-new-game">
+    <form>
+      <div>
+        <label for="name-player-one">P1 Name:</label>
+        <input id="name-player-one" type="text" name="name-player-one" value="Player1">
+      </div>
+      <div>
+        <label for="symbol-player-one">P1 Symbol:</label>
+        <select id="symbol-player-one" name="symbol-player-one">
+          <option>🥸</option>
+          <option selected>💩</option>
+          <option>♿</option>
+          <option>🏡</option>
+          <option>X</option>
+        </select>
+      </div>
+      <br>
+      <div>
+        <label for="name-player-two">P2 Name:</label>
+        <input id="name-player-two" type="text" name="name-player-two" value="Player2">
+      </div>
+      <div>
+        <label for="symbol-player-two">P2 Symbol:</label>
+        <select id="symbol-player-two" name="symbol-player-two">
+          <option>🤓</option>
+          <option selected>💀</option>
+          <option>🏧</option>
+          <option>🛖</option>
+          <option>O</option>
+        </select>
+      </div>
+      <br>
+      <button type="submit">Submit</button>
+    </form>
+  </dialog>
 </body>
 </html>
