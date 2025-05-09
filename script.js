@@ -9,27 +9,29 @@ function Gameboard() {
     }
   }
 
-  const getBoard = () => board;
+  function getBoard() {
+    return board;
+  }
 
-  const placeToken = (i, j, token) => {
+  function placeToken(i, j, token) {
     const loc = board[i][j];
     if (!loc) {
       console.log('Outta bounds, dude.');  // for console
-      return 'ERROR';  // undefined  // consider recursively calling this? right now it just skips
+      return 'ERROR';
     } else if (!(loc.getValue() === 'n')) {
       console.log("That spot's taken, poke.");
       return 'ERROR';
     }
     board[i][j].addToken(token);
-  };
+  }
 
-  const printBoard = () => {  // for console game
+  function printBoard() {  // for console game
     const arrToPrint = [];
     board.forEach((row) => {
       arrToPrint.push([row[0].getValue(), row[1].getValue(), row[2].getValue()]);
     })
     console.log(arrToPrint);
-  };
+  }
 
   return {
     getBoard,
@@ -42,11 +44,13 @@ function Gameboard() {
 function Cell() {
   let value = 'n';
 
-  const addToken = (token) => {
+  function addToken(token) {
     value = token;
-  };
+  }
 
-  const getValue = () => value;
+  function getValue() {
+    return value;
+  }
 
   return {
     addToken,
@@ -71,28 +75,28 @@ function GameController() {
   ];
   let activePlayer = players[0];
 
-  const switchPlayerTurn = () => {
+  function switchPlayerTurn() {
     activePlayer = (activePlayer === players[0]) ? players[1] : players[0];
-  };
+  }
 
-  const printNewRound = () => {  // for console game
+  function printNewRound() {  // for console game
     board.printBoard();
     console.log(`${activePlayer.name}'s turn`);
   };
 
-  const checkWinner = () => {
+  function checkWinner() {
     const cells = board.getBoard();
     let cell1;
     let cell2;
     let cell3;
     let winner;
     let isCat = true;
-    const detectWinner = () => {
+    function detectWinner() {
       if (cell1 === cell2 && cell1 === cell3 && cell1 !== 'n') {
         winner = players.find((player) => player.token === cell1).name;
       }
     }
-    const detectCat = () => {  // i call this at the end because the last move may cause a win
+    function detectCat() {  // i call this at the end because the last move may cause a win
       tieCheck:
       for (const row of cells) {
         for (const cell of row) {
@@ -103,7 +107,7 @@ function GameController() {
         }
       }
     }
-    // horizontals
+    /* horizontals */
     for (const row of cells) {
       cell1 = row[0].getValue();
       cell2 = row[1].getValue();
@@ -111,7 +115,7 @@ function GameController() {
       detectWinner(cell1, cell2, cell3);
       if (winner) return winner;
     }
-    // verticals
+    /* verticals */
     const cols = cells[0].length;
     for (let i = 0; i < cols; i++) {  // the thing that's changing is the column
       cell1 = cells[0][i].getValue();  // we access one from each row
@@ -120,28 +124,32 @@ function GameController() {
       detectWinner(cell1, cell2, cell3);
       if (winner) return winner;
     }
-    // diagonal downhill
+    /* diagonal downhill */
     cell1 = cells[0][0].getValue();
     cell2 = cells[1][1].getValue();
     cell3 = cells[2][2].getValue();  
     detectWinner(cell1, cell2, cell3);
     if (winner) return winner;
-    // diagonal uphill
+    /* diagonal uphill */
     cell1 = cells[0][2].getValue();
     cell2 = cells[1][1].getValue();
     cell3 = cells[2][0].getValue();  
     detectWinner(cell1, cell2, cell3);
     if (winner) return winner;
-    // Check if board is full
+    /* Check if board is full */
     detectCat();
     if (isCat) return 'CAT';
   }
 
-  const getActivePlayer = () => activePlayer;
+  function getActivePlayer() {
+    return activePlayer;
+  }
 
-  const getBoard = () => board.getBoard();
+  function getBoard() {
+    return board.getBoard()
+  }
 
-  const playRound = (i, j) => {
+  function playRound(i, j) {
     const errorCheck = board.placeToken(i, j, activePlayer.token);
     if (errorCheck) return;
     const gameEnd = checkWinner();
@@ -168,14 +176,14 @@ function ScreenController() {
   let game;
   let gameEnd;
 
-  const startNewGame = () => {
+  function startNewGame() {
     game = GameController();
     gameEnd = undefined;
     updateScreen();
   }
 
-  const updateScreen = () => {
-    // Create board
+  function updateScreen() {
+    /* Create board */
     const board = game.getBoard();
     divBoard.textContent = '';
     for (const row of board) {
@@ -188,13 +196,13 @@ function ScreenController() {
         divBoard.appendChild(btnCell);
       }
     }
-    // Update turn
+    /* Update turn */
     const activePlayer = game.getActivePlayer().name;
     divTurn.textContent = `${activePlayer}, move.`;
-    // Update other message and btnNewGame
+    /* Update other message and btnNewGame */
     if (gameEnd) {
       if (gameEnd === 'CAT') {
-        divOthermsg.textContent = "No one wins. It's a cat.";
+        divOthermsg.textContent = "It's a cat. No one wins.";
       } else {
         divOthermsg.textContent = `The winner is ${gameEnd}.`;
       }
@@ -204,7 +212,7 @@ function ScreenController() {
     } else {
       divOthermsg.textContent = '';
     }
-  };
+  }
 
   divBoard.addEventListener('click', (e) => {
     if (gameEnd) return;
